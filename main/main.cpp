@@ -30,6 +30,7 @@
 
 #include "main.h"
 
+#include "core/gc/shared/safepoint.h"
 #include "core/config/project_settings.h"
 #include "core/core_globals.h"
 #include "core/crypto/crypto.h"
@@ -4897,6 +4898,7 @@ bool Main::iteration() {
 	}
 #endif
 
+	ENTER_SAFEPOINT;
 	return exit;
 }
 

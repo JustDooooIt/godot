@@ -31,6 +31,7 @@
 #include "core_bind.h"
 #include "core_bind.compat.inc"
 
+#include "core/gc/shared/safepoint.h"
 #include "core/config/project_settings.h"
 #include "core/crypto/crypto_core.h"
 #include "core/debugger/engine_debugger.h"
@@ -1483,6 +1484,7 @@ Error Thread::start(const Callable &p_callable, Priority p_priority) {
 	::Thread::Settings s;
 	s.priority = (::Thread::Priority)p_priority;
 	thread.start(_start_func, ud, s);
+	THREAD_STARTED;
 
 	return OK;
 }
@@ -1504,6 +1506,7 @@ Variant Thread::wait_to_finish() {
 	thread.wait_to_finish();
 	Variant r = ret;
 	target_callable = Callable();
+	THREAD_STOPED;
 
 	return r;
 }

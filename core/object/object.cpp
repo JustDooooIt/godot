@@ -30,6 +30,7 @@
 
 #include "object.h"
 
+#include "core/gc/g1/g1GCManager.h"
 #include "core/extension/gdextension_manager.h"
 #include "core/io/resource.h"
 #include "core/object/class_db.h"
@@ -2442,6 +2443,10 @@ ObjectID ObjectDB::add_instance(Object *p_object) {
 	slot_count++;
 
 	spin_lock.unlock();
+
+	if (slot_count > 2) {
+		G1GCManager::get_singleton()->start_gc_thread();
+	}
 
 	return ObjectID(id);
 }
