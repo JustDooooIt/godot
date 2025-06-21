@@ -648,6 +648,7 @@ private:
 	HashMap<StringName, Variant *> metadata_properties;
 	mutable const StringName *_class_name_ptr = nullptr;
 
+	void _evacuation_write_barrier(Variant old_val, Variant new_val);
 	void _add_user_signal(const String &p_name, const Array &p_args = Array());
 	bool _has_user_signal(const StringName &p_name) const;
 	void _remove_user_signal(const StringName &p_name);

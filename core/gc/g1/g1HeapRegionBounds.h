@@ -9,9 +9,20 @@ public:
 	static const size_t TARGET_REGION_NUMBER = 2048;
 
 public:
-	static inline size_t min_size();
-	static inline size_t max_ergonomics_size();
-	static inline size_t max_size();
-	static inline size_t target_number();
+	static size_t min_size() {
+		return MIN_REGION_SIZE;
+	}
+
+	static size_t max_ergonomics_size() {
+		return MAX_ERGONOMICS_SIZE;
+	}
+
+	static size_t max_size() {
+		return MAX_REGION_SIZE;
+	}
+
+	static size_t target_number() {
+		return TARGET_REGION_NUMBER;
+	}
 };
 #endif // __G1HEAPREGIONBOUNDS_H__

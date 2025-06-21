@@ -1,0 +1,10 @@
+#!/usr/bin/env python
+from misc.utility.scons_hints import *
+
+Import("env")
+
+env_object = env.Clone()
+
+cpp_files = Glob("**/*.cpp")
+
+env_object.add_source_files(env.core_sources, cpp_files)

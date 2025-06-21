@@ -30,8 +30,9 @@
 
 #include "object.h"
 
-#include "core/gc/g1/g1GCManager.h"
 #include "core/extension/gdextension_manager.h"
+#include "core/gc/g1/g1GCManager.h"
+#include "core/gc/g1/g1HeapRegion.h"
 #include "core/io/resource.h"
 #include "core/object/class_db.h"
 #include "core/object/message_queue.h"
@@ -286,6 +287,9 @@ void Object::set(const StringName &p_name, const Variant &p_value, bool *r_valid
 #endif
 
 	if (script_instance) {
+		Variant old_val;
+		script_instance->get(p_name, old_val);
+		_evacuation_write_barrier(old_val, p_value);
 		if (script_instance->set(p_name, p_value)) {
 			if (r_valid) {
 				*r_valid = true;
@@ -1310,6 +1314,25 @@ Error Object::emit_signalp(const StringName &p_name, const Variant **p_args, int
 	}
 
 	return err;
+}
+
+void Object::_evacuation_write_barrier(Variant old_val, Variant new_val) {
+	if (new_val.get_type() != Variant::Type::OBJECT) {
+		return;
+	}
+	Object *old_obj = old_val;
+	Object *new_obj = new_val;
+	if (!new_obj) {
+		return;
+	}
+	intptr_t check = (intptr_t)old_obj ^ (intptr_t)new_obj;
+	check = check >> G1HeapRegion::LogPerRegionSize;
+	if (check == 0) {
+		return;
+	}
+	// 脏卡片检查
+	// 设为脏卡片
+	// 添加到rs日志
 }
 
 void Object::_add_user_signal(const String &p_name, const Array &p_args) {
@@ -2443,10 +2466,6 @@ ObjectID ObjectDB::add_instance(Object *p_object) {
 	slot_count++;
 
 	spin_lock.unlock();
-
-	if (slot_count > 2) {
-		G1GCManager::get_singleton()->start_gc_thread();
-	}
 
 	return ObjectID(id);
 }

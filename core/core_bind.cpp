@@ -31,6 +31,7 @@
 #include "core_bind.h"
 #include "core_bind.compat.inc"
 
+#include "core/gc/g1/g1GCManager.h"
 #include "core/gc/shared/safepoint.h"
 #include "core/config/project_settings.h"
 #include "core/crypto/crypto_core.h"
@@ -2051,6 +2052,10 @@ bool Engine::is_printing_error_messages() const {
 	return ::Engine::get_singleton()->is_printing_error_messages();
 }
 
+void Engine::run_gc() {
+	G1GCManager::get_singleton()->start_gc_thread();
+}
+
 #ifdef TOOLS_ENABLED
 void Engine::get_argument_options(const StringName &p_function, int p_idx, List<String> *r_options) const {
 	const String pf = p_function;
@@ -2118,6 +2123,8 @@ void Engine::_bind_methods() {
 
 	ClassDB::bind_method(D_METHOD("set_print_error_messages", "enabled"), &Engine::set_print_error_messages);
 	ClassDB::bind_method(D_METHOD("is_printing_error_messages"), &Engine::is_printing_error_messages);
+
+	ClassDB::bind_method(D_METHOD("run_gc"), &Engine::run_gc);
 
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "print_error_messages"), "set_print_error_messages", "is_printing_error_messages");
 	ADD_PROPERTY(PropertyInfo(Variant::BOOL, "print_to_stdout"), "set_print_to_stdout", "is_printing_to_stdout");

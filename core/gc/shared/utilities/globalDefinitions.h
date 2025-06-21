@@ -18,6 +18,12 @@
 // Note that the PTR format specifiers print using 0x with leading zeros,
 // just like the _X_0 version for integers.
 
+#include <cinttypes>
+#include <cstddef>
+#include <cstdint>
+#include <limits>
+#include <type_traits>
+
 // Format 8-bit quantities.
 #define INT8_FORMAT_X_0 "0x%02" PRIx8
 #define UINT8_FORMAT_X_0 "0x%02" PRIx8
